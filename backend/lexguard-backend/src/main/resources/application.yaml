@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: lexguard-backend
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration
