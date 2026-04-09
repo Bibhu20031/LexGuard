@@ -1,8 +1,11 @@
 package com.lexguard.lexguardbackend.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@AllArgsConstructor
+@Getter
+@Setter
 public class AuthResponse {
+
     private String token;
 }
