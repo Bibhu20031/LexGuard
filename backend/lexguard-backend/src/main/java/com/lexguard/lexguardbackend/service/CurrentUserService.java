@@ -21,7 +21,7 @@ public class CurrentUserService {
                 .getContext()
                 .getAuthentication();
 
-        
+
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User not authenticated");
         }
