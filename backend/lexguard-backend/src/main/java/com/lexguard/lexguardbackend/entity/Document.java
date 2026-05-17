@@ -23,6 +23,9 @@ public class Document {
     @Column(nullable = false)
     private String fileName;
 
+    @Column(columnDefinition = "TEXT")
+    private String extractedText;
+
     @Column(name= "uploaded_at")
     private LocalDateTime uploadTime;
 }
