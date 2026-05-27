@@ -3,11 +3,13 @@ package com.lexguard.lexguardbackend.service;
 
 import com.lexguard.lexguardbackend.dto.DocumentRequest;
 import com.lexguard.lexguardbackend.dto.DocumentResponse;
+import com.lexguard.lexguardbackend.dto.UploadDocumentResponse;
 import com.lexguard.lexguardbackend.entity.Document;
 import com.lexguard.lexguardbackend.entity.User;
 import com.lexguard.lexguardbackend.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +23,9 @@ public class DocumentService {
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private PdfService pdfService;
 
     private DocumentResponse mapToResponse(Document document) {
         return new DocumentResponse(
@@ -60,5 +65,37 @@ public class DocumentService {
         Document doc = documentRepository.findByIdAndUser(documentId, user).orElseThrow(() -> new RuntimeException("Document not found"));
 
         documentRepository.delete(doc);
+    }
+
+    public UploadDocumentResponse uploadDocument(MultipartFile file) {
+
+        User user = currentUserService.getCurrentUser();
+
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+
+        if (!file.getOriginalFilename().endsWith(".pdf")) {
+            throw new RuntimeException("Only PDF files allowed");
+        }
+
+        String extractedText =
+                pdfService.extractText(file);
+
+        Document document = new Document();
+
+        document.setUser(user);
+        document.setFileName(file.getOriginalFilename());
+        document.setUploadTime(LocalDateTime.now());
+        document.setExtractedText(extractedText);
+
+        Document saved =
+                documentRepository.save(document);
+
+        return new UploadDocumentResponse(
+                saved.getId(),
+                saved.getFileName(),
+                "PDF uploaded successfully"
+        );
     }
 }

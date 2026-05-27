@@ -2,9 +2,11 @@ package com.lexguard.lexguardbackend.controllers;
 
 import com.lexguard.lexguardbackend.dto.DocumentRequest;
 import com.lexguard.lexguardbackend.dto.DocumentResponse;
+import com.lexguard.lexguardbackend.dto.UploadDocumentResponse;
 import com.lexguard.lexguardbackend.service.DocumentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -46,5 +48,16 @@ public class DocumentController {
         documentService.deleteDocument(id);
 
         return ResponseEntity.ok("Document deleted successfully");
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<UploadDocumentResponse> uploadDocument(
+            @RequestParam("file") MultipartFile file
+    ) {
+
+        UploadDocumentResponse response =
+                documentService.uploadDocument(file);
+
+        return ResponseEntity.ok(response);
     }
 }
