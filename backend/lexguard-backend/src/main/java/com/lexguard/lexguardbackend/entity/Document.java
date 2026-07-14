@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -28,4 +30,11 @@ public class Document {
 
     @Column(name= "uploaded_at")
     private LocalDateTime uploadTime;
+
+    @OneToMany(
+            mappedBy = "document",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Clause> clauses = new ArrayList<>();
 }
