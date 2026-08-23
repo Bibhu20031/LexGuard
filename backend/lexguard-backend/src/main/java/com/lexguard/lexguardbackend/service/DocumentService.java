@@ -4,8 +4,10 @@ package com.lexguard.lexguardbackend.service;
 import com.lexguard.lexguardbackend.dto.DocumentRequest;
 import com.lexguard.lexguardbackend.dto.DocumentResponse;
 import com.lexguard.lexguardbackend.dto.UploadDocumentResponse;
+import com.lexguard.lexguardbackend.entity.Clause;
 import com.lexguard.lexguardbackend.entity.Document;
 import com.lexguard.lexguardbackend.entity.User;
+import com.lexguard.lexguardbackend.repository.ClauseRepository;
 import com.lexguard.lexguardbackend.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,12 @@ public class DocumentService {
 
     @Autowired
     private PdfService pdfService;
+
+    @Autowired
+    private ClauseSegmentationService clauseSegmentationService;
+
+    @Autowired
+    private ClauseRepository clauseRepository;
 
     private DocumentResponse mapToResponse(Document document) {
         return new DocumentResponse(
@@ -92,9 +100,22 @@ public class DocumentService {
         Document saved =
                 documentRepository.save(document);
 
+        List<String> clauses = clauseSegmentationService.segmentClauses(extractedText);
+
+        for (String clauseText : clauses) {
+
+            Clause clause = new Clause();
+
+            clause.setDocument(saved);
+            clause.setClauseText(clauseText);
+
+            clauseRepository.save(clause);
+        }
+
         return new UploadDocumentResponse(
                 saved.getId(),
                 saved.getFileName(),
+                clauses.size(),
                 "PDF uploaded successfully"
         );
     }

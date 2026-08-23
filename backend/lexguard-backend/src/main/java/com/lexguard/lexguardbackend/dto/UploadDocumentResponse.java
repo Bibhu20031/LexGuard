@@ -13,5 +13,7 @@ public class UploadDocumentResponse {
 
     private String fileName;
 
+    private Integer clauseCount;
+
     private String message;
 }
