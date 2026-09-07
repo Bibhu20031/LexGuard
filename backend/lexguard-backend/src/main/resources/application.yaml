@@ -8,6 +8,14 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  ai:
+    google:
+      genai:
+        embedding:
+          api-key: ${GEMINI_API_KEY}
+          text:
+            model: text-embedding-004
+
   jpa:
     hibernate:
       ddl-auto: update
