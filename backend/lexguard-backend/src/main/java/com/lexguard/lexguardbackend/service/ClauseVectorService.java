@@ -24,6 +24,7 @@ public class ClauseVectorService {
                 Map.of(
                         "clauseId", clause.getId(),
                         "documentId", clause.getDocument().getId(),
+                        "userId", clause.getDocument().getUser().getId(),
                         "type", "CLAUSE"
                 )
         );

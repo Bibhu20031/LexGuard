@@ -11,12 +11,23 @@ spring:
   ai:
     google:
       genai:
+        project-id: ${GOOGLE_PROJECT_ID}
         embedding:
           api-key: ${GEMINI_API_KEY}
           text:
-            model: text-embedding-004
+            options:
+              model: text-embedding-004
+              dimensions: 768
+
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        index-type: HNSW
+        dimensions: 768
+        distance-type: COSINE_DISTANCE
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
 
@@ -35,3 +46,8 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
+
+logging:
+  level:
+    org.hibernate.orm.connections.pooling: WARN
+    org.springframework.ai.vectorstore.pgvector: WARN

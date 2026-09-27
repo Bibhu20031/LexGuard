@@ -35,6 +35,9 @@ public class DocumentService {
     @Autowired
     private ClauseRepository clauseRepository;
 
+    @Autowired
+    private ClauseEmbeddingService clauseEmbeddingService;
+
     private DocumentResponse mapToResponse(Document document) {
         return new DocumentResponse(
                 document.getId(),
@@ -109,7 +112,9 @@ public class DocumentService {
             clause.setDocument(saved);
             clause.setClauseText(clauseText);
 
-            clauseRepository.save(clause);
+            Clause savedClause = clauseRepository.save(clause);
+
+            clauseEmbeddingService.generateAndStoreEmbedding(savedClause);
         }
 
         return new UploadDocumentResponse(
