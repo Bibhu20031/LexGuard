@@ -71,6 +71,7 @@ public class GeminiRiskAnalysisService {
 
         return new RiskAnalysisResponse(
                 riskLevel,
+                0,
                 explanation
         );
     }

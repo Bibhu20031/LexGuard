@@ -21,19 +21,22 @@ public class ContractAnalysisService {
     private final CurrentUserService currentUserService;
     private final ClauseRetrievalService clauseRetrievalService;
     private final GeminiRiskAnalysisService geminiRiskAnalysisService;
+    private final RiskScoringService riskScoringService;
 
     public ContractAnalysisService(
             DocumentRepository documentRepository,
             ClauseRepository clauseRepository,
             CurrentUserService currentUserService,
             ClauseRetrievalService clauseRetrievalService,
-            GeminiRiskAnalysisService geminiRiskAnalysisService
+            GeminiRiskAnalysisService geminiRiskAnalysisService,
+            RiskScoringService riskScoringService
     ) {
         this.documentRepository = documentRepository;
         this.clauseRepository = clauseRepository;
         this.currentUserService = currentUserService;
         this.clauseRetrievalService = clauseRetrievalService;
         this.geminiRiskAnalysisService = geminiRiskAnalysisService;
+        this.riskScoringService = riskScoringService;
     }
 
     public ContractAnalysisResponse analyzeDocument(Long documentId) {
@@ -65,10 +68,33 @@ public class ContractAnalysisService {
                     context
             );
 
-            RiskAnalysisResponse analysis =
+            RiskAnalysisResponse aiAnalysis =
                     geminiRiskAnalysisService.analyzeClause(request);
 
-            analyses.add(analysis);
+            Integer finalRiskScore =
+                    riskScoringService.calculateRiskScore(
+                            aiAnalysis.getRiskLevel(),
+                            clause.getClauseText()
+                    );
+
+            String finalRiskLevel =
+                    riskScoringService.determineRiskLevel(
+                            finalRiskScore
+                    );
+
+            clause.setRiskScore(finalRiskScore.doubleValue());
+            clause.setRiskLevel(finalRiskLevel);
+            clause.setRiskExplanation(aiAnalysis.getExplanation());
+
+            clauseRepository.save(clause);
+
+            analyses.add(
+                    new RiskAnalysisResponse(
+                            finalRiskLevel,
+                            finalRiskScore,
+                            aiAnalysis.getExplanation()
+                    )
+            );
         }
 
         return new ContractAnalysisResponse(

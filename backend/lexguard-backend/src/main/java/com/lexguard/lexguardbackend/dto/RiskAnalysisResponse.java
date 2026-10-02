@@ -8,5 +8,6 @@ import lombok.Getter;
 public class RiskAnalysisResponse {
 
     private String riskLevel;
+    private Integer riskScore;
     private String explanation;
 }
