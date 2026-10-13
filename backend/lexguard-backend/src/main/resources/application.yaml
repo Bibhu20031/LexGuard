@@ -11,6 +11,13 @@ spring:
       connection-timeout: 30000
       initialization-fail-timeout: 60000
 
+  data:
+    redis:
+      url: ${REDIS_URL}
+      connect-timeout: 5s
+      timeout: 3s
+
+
   ai:
     google:
       genai:
@@ -18,7 +25,7 @@ spring:
         api-key: ${GEMINI_API_KEY}
         chat:
           options:
-            model: gemini-2.5-flash
+            model: gemini-3.8-flash
             temperature: 0.2
 
         # Embedding connection (separate namespace, needs its own api-key)
@@ -58,3 +65,4 @@ logging:
   level:
     org.hibernate.orm.connections.pooling: WARN
     org.springframework.ai.vectorstore.pgvector: WARN
+    org.springframework.security: TRACE
